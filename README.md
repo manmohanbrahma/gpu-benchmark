@@ -5,6 +5,7 @@ https://manmohanbrahma.github.io/gpu-benchmark/
 
 | Report | Path |
 |---|---|
+| AMD GPU fractions in KAI: a hard memory cap at no performance cost (W7900 vs A6000) | [`amd-fraction-dmem-cap/`](https://manmohanbrahma.github.io/gpu-benchmark/amd-fraction-dmem-cap/) |
 | Nemotron Nano: NVIDIA RTX A6000 vs AMD Radeon Pro W7900 | [`nemotron-a6000-vs-w7900/`](https://manmohanbrahma.github.io/gpu-benchmark/nemotron-a6000-vs-w7900/) |
 
 To add a benchmark: put its self-contained HTML report in a new folder as `index.html`, then add a card to the root `index.html` and a row here.

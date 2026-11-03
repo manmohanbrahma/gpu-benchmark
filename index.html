@@ -44,6 +44,13 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
 </header>
 
 <section class="list" aria-label="Benchmarks">
+  <a class="card" href="amd-fraction-dmem-cap/">
+    <span class="eyebrow">November 2026</span>
+    <h2>AMD GPU fractions in KAI: a hard memory cap at no performance cost</h2>
+    <p class="muted">Open Inference Fabric's AMD backend for KAI gpu-fractioning caps each fractional pod's GPU memory with the Linux dmem cgroup. vLLM with Qwen3-0.6B on a Radeon PRO W7900, against NVIDIA's gpu-fractioning on an RTX A6000: whole GPU, one capped half, two halves sharing, and an over-ask the kernel refuses.</p>
+    <div class="tags"><span class="tag">Radeon PRO W7900</span><span class="tag">RTX A6000</span><span class="tag">KAI Scheduler</span><span class="tag">GPU fractions</span><span class="tag">dmem cgroup</span><span class="tag">vLLM</span></div>
+    <span class="go">Open report →</span>
+  </a>
   <a class="card" href="nemotron-a6000-vs-w7900/">
     <span class="eyebrow">October 2026</span>
     <h2>Nemotron Nano: NVIDIA RTX A6000 vs AMD Radeon Pro W7900</h2>
