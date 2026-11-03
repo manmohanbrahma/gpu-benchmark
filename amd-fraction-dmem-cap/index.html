@@ -2,11 +2,12 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
 /* Layout: a single reading column for the verdict and notes; charts and tables break wider on a lab-report grid */
 :root {
-  --bg: #f6f7f8; --surface: #ffffff; --ink: #14171c; --ink-2: #4a515c; --ink-3: #6f7682;
+  --bg: #ffffff; --surface: #ffffff;
+  --l-teal: #0E7C86; --l-saffron: #E39A2D; --l-ink: #16202A; --ink: #14171c; --ink-2: #4a515c; --ink-3: #6f7682;
   --rule: #dde1e6; --grid: #e8ebee; --chip: #eef1f4;
   --amd: #2a78d6; --nv: #eb6834; --good: #1a7f37; --good-bg: #e6f4ea; --warn: #9a6700; --warn-bg: #fff4d6;
   --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -14,10 +15,12 @@
   --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --l-teal: #2BA7B1; --l-saffron: #F0AE48; --l-ink: #E6EBEE;
   --bg: #121418; --surface: #1a1d22; --ink: #eceef1; --ink-2: #b4bac3; --ink-3: #8b929c;
   --rule: #2d3239; --grid: #252a30; --chip: #232830;
   --amd: #3987e5; --nv: #d95926; --good: #4ac26b; --good-bg: #16301f; --warn: #d4a72c; --warn-bg: #33290f; color-scheme: dark } }
 :root[data-theme="dark"] {
+  --l-teal: #2BA7B1; --l-saffron: #F0AE48; --l-ink: #E6EBEE;
   --bg: #121418; --surface: #1a1d22; --ink: #eceef1; --ink-2: #b4bac3; --ink-3: #8b929c;
   --rule: #2d3239; --grid: #252a30; --chip: #232830;
   --amd: #3987e5; --nv: #d95926; --good: #4ac26b; --good-bg: #16301f; --warn: #d4a72c; --warn-bg: #33290f; color-scheme: dark }
@@ -27,6 +30,11 @@ body { background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--f-bod
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px }
 .wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 48px }
 .col { max-width: none }
+.brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; text-decoration: none }
+.brand svg { width: 53px; height: 40px; flex: none }
+.brand .t { fill: var(--l-teal) } .brand .s { fill: var(--l-saffron) } .brand .i { fill: var(--l-ink) } .brand .g { fill: var(--bg) }
+.wordmark { font: 700 24px/1 "Bricolage Grotesque", "Archivo", sans-serif; color: var(--l-ink); letter-spacing: -0.01em }
+.wordmark span { color: var(--l-teal) }
 .wrap p, .notes li { text-align: justify; hyphens: auto }
 .wrap p.eyebrow, .panel p.sub { text-align: left; hyphens: manual }
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em }
@@ -95,7 +103,17 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 10px; color: var(-
 
 <div class="wrap">
   <header class="col">
-    <p class="eyebrow">Open Inference Fabric · AMD backend for KAI gpu-fractioning · 3 November 2026</p>
+    <a class="brand" href="https://github.com/openinferencefabric/oif" aria-label="Open Inference Fabric">
+      <svg viewBox="0 0 132 100" aria-hidden="true"><rect class="t" x="26" y="12" width="15" height="76" rx="7.5"/><rect class="s" x="54" y="12" width="15" height="76" rx="7.5"/>
+        <rect class="g" x="8" y="27" width="76" height="21"/><rect class="i" x="8" y="30" width="76" height="15" rx="7.5"/>
+        <rect class="g" x="8" y="53" width="76" height="21"/><rect class="i" x="8" y="56" width="76" height="15" rx="7.5"/>
+        <rect class="g" x="51" y="29" width="21" height="17"/><rect class="s" x="54" y="28" width="15" height="19"/>
+        <rect class="g" x="23" y="55" width="21" height="17"/><rect class="t" x="26" y="54" width="15" height="19"/>
+        <circle class="i" cx="96" cy="37.5" r="7.5"/><circle class="i" cx="113" cy="37.5" r="5"/><circle class="i" cx="125" cy="37.5" r="3"/>
+        <circle class="i" cx="96" cy="63.5" r="7.5"/><circle class="i" cx="113" cy="63.5" r="5"/><circle class="i" cx="125" cy="63.5" r="3"/></svg>
+      <span class="wordmark">open inference <span>fabric</span></span>
+    </a>
+    <p class="eyebrow">AMD backend for KAI gpu-fractioning · 3 November 2026</p>
     <h1 style="margin-top:12px">AMD GPU fractions in KAI: a hard memory cap at no performance cost</h1>
     <p class="lede">We added an AMD backend to <span class="mono">fractiond</span>, the node agent of KAI Scheduler's gpu-fractioning, that caps each fractional pod's GPU memory with the Linux dmem cgroup. This benchmark checks what the cap costs: vLLM on a Radeon PRO W7900, with the same run on an RTX A6000 under NVIDIA's gpu-fractioning as the reference.</p>
   </header>
