@@ -44,6 +44,13 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
 </header>
 
 <section class="list" aria-label="Benchmarks">
+  <a class="card" href="w7900-dynamo-vs-vllm/">
+    <span class="eyebrow">November 2026</span>
+    <h2>Dynamo vs plain vLLM on the Radeon PRO W7900</h2>
+    <p class="muted">NVIDIA Dynamo, built for AMD GPUs by Open Inference Fabric, against vLLM's own server on the same vLLM 0.33.0 ROCm engine. Qwen3-0.6B and Qwen3-8B, chat and decode workloads, 1 to 32 users: the same throughput and time per token, and up to 40% lower time to first token, with the reason traced in the code.</p>
+    <div class="tags"><span class="tag">Radeon PRO W7900</span><span class="tag">NVIDIA Dynamo</span><span class="tag">vLLM</span><span class="tag">ROCm</span><span class="tag">AIPerf</span></div>
+    <span class="go">Open report →</span>
+  </a>
   <a class="card" href="amd-fraction-dmem-cap/">
     <span class="eyebrow">November 2026</span>
     <h2>AMD GPU fractions in KAI: a hard memory cap at no performance cost</h2>

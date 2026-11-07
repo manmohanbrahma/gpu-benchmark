@@ -5,6 +5,7 @@ https://manmohanbrahma.github.io/gpu-benchmark/
 
 | Report | Path |
 |---|---|
+| Dynamo vs plain vLLM on the Radeon PRO W7900 (same vLLM 0.33.0 ROCm engine) | [`w7900-dynamo-vs-vllm/`](https://manmohanbrahma.github.io/gpu-benchmark/w7900-dynamo-vs-vllm/) |
 | AMD GPU fractions in KAI: a hard memory cap at no performance cost (W7900 vs A6000) | [`amd-fraction-dmem-cap/`](https://manmohanbrahma.github.io/gpu-benchmark/amd-fraction-dmem-cap/) |
 | Nemotron Nano: NVIDIA RTX A6000 vs AMD Radeon Pro W7900 | [`nemotron-a6000-vs-w7900/`](https://manmohanbrahma.github.io/gpu-benchmark/nemotron-a6000-vs-w7900/) |
 
