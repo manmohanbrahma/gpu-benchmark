@@ -1,0 +1,369 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kimi K3 Fabric Sweep</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column for verdict and notes; charts run the full 1040px column, stacked so the shared concurrency axis lines up */
+:root {
+  --bg: #ffffff; --surface: #ffffff;
+  --l-teal: #0E7C86; --l-saffron: #E39A2D; --l-ink: #16202A; --ink: #14171c; --ink-2: #4a515c; --ink-3: #6f7682;
+  --rule: #dde1e6; --grid: #e8ebee; --chip: #eef1f4; --axis: #c3c8cf;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+  --good: #1a7f37; --good-bg: #e6f4ea; --warn: #9a6700; --warn-bg: #fff4d6; --bad: #b42318; --bad-bg: #fdecea;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --l-teal: #2BA7B1; --l-saffron: #F0AE48; --l-ink: #E6EBEE;
+  --bg: #121418; --surface: #1a1d22; --ink: #eceef1; --ink-2: #b4bac3; --ink-3: #8b929c;
+  --rule: #2d3239; --grid: #252a30; --chip: #232830; --axis: #3a4048;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+  --good: #4ac26b; --good-bg: #16301f; --warn: #d4a72c; --warn-bg: #33290f; --bad: #f97066; --bad-bg: #3a1714; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --l-teal: #2BA7B1; --l-saffron: #F0AE48; --l-ink: #E6EBEE;
+  --bg: #121418; --surface: #1a1d22; --ink: #eceef1; --ink-2: #b4bac3; --ink-3: #8b929c;
+  --rule: #2d3239; --grid: #252a30; --chip: #232830; --axis: #3a4048;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+  --good: #4ac26b; --good-bg: #16301f; --warn: #d4a72c; --warn-bg: #33290f; --bad: #f97066; --bad-bg: #3a1714; color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px }
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 48px }
+.wrap > * { min-width: 0 }
+.brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; text-decoration: none }
+.brand svg { width: 53px; height: 40px; flex: none }
+.brand .t { fill: var(--l-teal) } .brand .s { fill: var(--l-saffron) } .brand .i { fill: var(--l-ink) } .brand .g { fill: var(--bg) }
+.wordmark { font: 700 24px/1 "Bricolage Grotesque", "Archivo", sans-serif; color: var(--l-ink); letter-spacing: -0.01em }
+.wordmark span { color: var(--l-teal) }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em }
+h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 800; line-height: 1.08 }
+h2 { font-size: 24px; font-weight: 700 }
+h3 { font-size: 16px; font-weight: 700 }
+p { margin: 0 }
+.prose { max-width: 70ch; display: grid; gap: 12px }
+.eyebrow { font: 600 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3) }
+.lede { font-size: 19px; color: var(--ink-2); margin-top: 14px; max-width: 70ch }
+section { display: grid; gap: 18px }
+.mono, .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums }
+a { color: var(--s1) }
+a:focus-visible, button:focus-visible, summary:focus-visible, svg:focus-visible { outline: 2px solid var(--l-teal); outline-offset: 2px; border-radius: 3px }
+
+.verdict { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--l-teal); border-radius: 6px; padding: 22px 24px; display: grid; gap: 18px }
+.verdict .answer { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap }
+.verdict .answer strong { font: 700 21px/1.3 var(--f-display) }
+.pill { font: 600 12px/1 var(--f-mono); padding: 6px 10px; border-radius: 99px; background: var(--chip); color: var(--ink-2); white-space: nowrap }
+.pill.good { background: var(--good-bg); color: var(--good) } .pill.warn { background: var(--warn-bg); color: var(--warn) } .pill.bad { background: var(--bad-bg); color: var(--bad) }
+.deltas { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px }
+.delta { display: grid; gap: 6px; padding-top: 12px; border-top: 1px solid var(--rule); align-content: start }
+.delta .lab { font-size: 14px; color: var(--ink-2); display: flex; gap: 8px; align-items: center; flex-wrap: wrap }
+.delta .big { font: 600 22px/1.2 var(--f-mono); font-variant-numeric: tabular-nums }
+.delta .sm { font-size: 14px; color: var(--ink-3) }
+.sw { display: inline-block; width: 18px; height: 12px; flex: none; vertical-align: middle }
+
+.controls { display: flex; gap: 20px 28px; flex-wrap: wrap; align-items: end }
+.seg { display: grid; gap: 6px }
+.seg .eyebrow { font-size: 11px }
+.seg div { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; flex-wrap: wrap }
+.seg button { font: 600 14px/1 var(--f-body); color: var(--ink-2); background: var(--surface); border: 0; padding: 9px 14px; cursor: pointer }
+.seg button + button { border-left: 1px solid var(--rule) }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg) }
+.legend { display: flex; gap: 10px 20px; flex-wrap: wrap; font-size: 15px; color: var(--ink-2) }
+.legend span.item { display: inline-flex; gap: 8px; align-items: center }
+.legend .chip { font: 600 11px/1 var(--f-mono); padding: 3px 6px; border-radius: 4px; background: var(--chip); color: var(--ink-3) }
+
+.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 18px 10px; display: grid; gap: 4px; position: relative }
+.chart .sub { font-size: 14px; color: var(--ink-3) }
+.chart .plot { position: relative; min-width: 0 }
+.chart svg { display: block; width: 100%; overflow: visible }
+.chart text { font-family: var(--f-mono); font-size: 11px; fill: var(--ink-3) }
+.chart text.dl { font-family: var(--f-body); font-size: 13px; font-weight: 600; fill: var(--ink-2) }
+.chart text.note { font-family: var(--f-body); font-size: 12px; fill: var(--ink-3) }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,.12); min-width: 190px; z-index: 2 }
+.tip b { font-family: var(--f-display) }
+.tip .r { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 4px }
+.tip .r span:first-child { display: inline-flex; gap: 6px; align-items: center; color: var(--ink-2) }
+.tip .r span:last-child { font-family: var(--f-mono); font-variant-numeric: tabular-nums }
+
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface) }
+table { border-collapse: collapse; width: 100%; font-size: 15px }
+th, td { padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap }
+th:first-child, td:first-child { text-align: left }
+th { font: 600 12px/1.3 var(--f-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); background: var(--chip) }
+td { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 14px }
+td:first-child { font-family: var(--f-body); font-size: 15px }
+tr:last-child td { border-bottom: 0 }
+td .sub { display: block; font-size: 12px; color: var(--ink-3) }
+details summary { cursor: pointer; font-weight: 600; color: var(--ink-2) }
+details[open] summary { margin-bottom: 12px }
+ul.points { margin: 0; padding-left: 20px; display: grid; gap: 10px; max-width: 75ch }
+.foot { font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 6px }
+@media (max-width: 520px) { body { font-size: 16px } .verdict, .chart { padding: 16px } .seg button { padding: 9px 11px } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="https://github.com/openinferencefabric/oif" aria-label="Open Inference Fabric">
+      <svg viewBox="0 0 132 100" aria-hidden="true"><rect class="t" x="26" y="12" width="15" height="76" rx="7.5"/><rect class="s" x="54" y="12" width="15" height="76" rx="7.5"/>
+        <rect class="g" x="8" y="27" width="76" height="21"/><rect class="i" x="8" y="30" width="76" height="15" rx="7.5"/>
+        <rect class="g" x="8" y="53" width="76" height="21"/><rect class="i" x="8" y="56" width="76" height="15" rx="7.5"/>
+        <rect class="g" x="51" y="29" width="21" height="17"/><rect class="s" x="54" y="28" width="15" height="19"/>
+        <rect class="g" x="23" y="55" width="21" height="17"/><rect class="t" x="26" y="54" width="15" height="19"/>
+        <circle class="i" cx="96" cy="37.5" r="7.5"/><circle class="i" cx="113" cy="37.5" r="5"/><circle class="i" cx="125" cy="37.5" r="3"/>
+        <circle class="i" cx="96" cy="63.5" r="7.5"/><circle class="i" cx="113" cy="63.5" r="5"/><circle class="i" cx="125" cy="63.5" r="3"/></svg>
+      <span class="wordmark">open inference <span>fabric</span></span>
+    </a>
+    <p class="eyebrow">Network fabric study · 5 November 2026 · modelled, not measured</p>
+    <h1 style="margin-top:12px">Kimi K3 in FP8 on 16 B300 GPUs: what the network changes as users grow</h1>
+    <p class="lede">The same 16 GPUs, two servers of 8 × B300, connected four ways: 8 × ConnectX-8 at 800G, 2 × BlueField-3 at 400G, 8 × 10G and 1 × 10G. This page models time per output token, time to first token and total throughput from 1 to 1,024 concurrent users, for 2k-token and 32k-token prompts.</p>
+  </header>
+
+  <section class="verdict" aria-label="Answer">
+    <div class="answer"><span class="pill warn">Yes, and it grows with load</span><strong>At one user all four fabrics deliver 88 to 115 tokens per second. At 1,024 users, 1 × 10G gives 61% less throughput than 8 × CX-8.</strong></div>
+    <p style="color:var(--ink-2)">2k-token prompts, 1k-token outputs, 1,024 concurrent users, each fabric on the best layout it can run. Change against 8 × CX-8:</p>
+    <div class="deltas" id="deltas"></div>
+  </section>
+
+  <section aria-labelledby="h-charts">
+    <h2 id="h-charts">Latency and throughput by concurrency</h2>
+    <div class="controls">
+      <div class="seg"><span class="eyebrow" id="lab-wl">Workload</span><div role="group" aria-labelledby="lab-wl">
+        <button type="button" id="wl-2k" data-wl="2k" aria-pressed="true">2k in / 1k out</button><button type="button" id="wl-32k" data-wl="32k" aria-pressed="false">32k in / 1k out</button></div></div>
+      <div class="seg"><span class="eyebrow" id="lab-lay">Layout</span><div role="group" aria-labelledby="lab-lay">
+        <button type="button" id="lay-best" data-lay="best" aria-pressed="true">Best per fabric</button><button type="button" id="lay-ep" data-lay="EP16" aria-pressed="false">EP16 on all</button><button type="button" id="lay-pp" data-lay="PP2" aria-pressed="false">PP2 on all</button></div></div>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="chart"><h3>Total output throughput</h3><p class="sub">Tokens per second across all users. Higher is better.</p><div class="plot" id="c-tput"></div></div>
+    <div class="chart"><h3>Time per output token</h3><p class="sub">What each user sees while their answer streams. Lower is better. Log scale.</p><div class="plot" id="c-tpot"></div></div>
+    <div class="chart"><h3>Time to first token</h3><p class="sub">Wait before the answer starts, including other users' prompts sharing the GPUs. Lower is better. Log scale.</p><div class="plot" id="c-ttft"></div></div>
+    <details><summary>Show the numbers as a table</summary><div class="tbl" id="datatable"></div></details>
+  </section>
+
+  <section aria-labelledby="h-slo">
+    <h2 id="h-slo">Users served at a latency target</h2>
+    <p class="prose" style="color:var(--ink-2)">The most concurrent users each fabric holds while every user still gets an output token within the target. Follows the workload and layout selected above.</p>
+    <div class="tbl" id="slotable"></div>
+  </section>
+
+  <section aria-labelledby="h-why">
+    <h2 id="h-why">What changes as concurrency rises</h2>
+    <ul class="points">
+      <li><b>Up to about 8 users the fabric barely matters.</b> Each step reads weights from HBM and pays per-layer overhead; the messages crossing the network are a few kilobytes and are bound by latency, not bandwidth. At one user the pipeline layout is even slightly faster than EP16, because nothing crosses the network inside each layer.</li>
+      <li><b>Time per token rises on every fabric.</b> Bigger batches touch more of the 896 experts and read more KV cache, so even 8 × CX-8 goes from about 10 ms to 42 ms. That growth is the GPUs, not the network.</li>
+      <li><b>The BF-3 penalty grows with load.</b> Expert parallelism sends about 0.5 MB per token between the servers. At 1,024 users that is about 1.5 GB per step per node: about 2 ms on 8 × CX-8 against about 18 ms on 2 × BF-3, only part of which hides behind compute. Long prompts make it worse, because prompt tokens cross the network too.</li>
+      <li><b>On 10G the layout is the cost.</b> Expert parallelism over TCP collapses, so both 10G fabrics run a two-stage pipeline. Each GPU then reads its weights once per micro-batch, which costs about 1.6 to 1.8 times the time per token of EP16 once more than about 32 users are active.</li>
+      <li><b>1 × 10G becomes link-bound past about 256 users.</b> The pipeline hop carries about 21 MB of activations per step at 1,024 users, roughly 20 ms on one 10G port each way.</li>
+      <li><b>32k-token prompts fill KV cache at about 376 users</b> on either layout, so the 32k charts stop there. Prompt processing then dominates the GPUs, and every fabric's throughput flattens.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-fab">
+    <h2 id="h-fab">Fabrics and layouts in the model</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Fabric</th><th>Per node, raw</th><th>Effective</th><th>Cross-node collective</th><th>Transport</th><th>Best layout</th></tr></thead>
+      <tbody>
+        <tr><td>8 × CX-8 800G</td><td>800 GB/s</td><td>~680 GB/s</td><td>~20 µs</td><td>GPUDirect RDMA, DeepEP</td><td>EP16</td></tr>
+        <tr><td>2 × BF-3 400G</td><td>100 GB/s</td><td>~85 GB/s</td><td>~28 µs</td><td>RoCE, 4 GPUs per NIC</td><td>EP16</td></tr>
+        <tr><td>8 × 10G</td><td>10 GB/s</td><td>~7 GB/s</td><td>~200 µs</td><td>TCP sockets</td><td>PP2</td></tr>
+        <tr><td>1 × 10G</td><td>1.25 GB/s</td><td>~1.1 GB/s</td><td>~300 µs</td><td>TCP sockets, one port</td><td>PP2</td></tr>
+      </tbody></table></div>
+    <div class="prose" style="color:var(--ink-2)">
+      <p><b>EP16:</b> the 896 experts are spread over all 16 GPUs, attention runs tensor-parallel inside each server, and every MoE layer does a dispatch and a combine across the servers (184 per step). With DeepEP each token crosses once per remote node; over TCP it goes to each remote expert separately, about 8 times the bytes.</p>
+      <p><b>PP2:</b> layers 1–47 on one server and 48–93 on the other, TP8 with EP8 inside each. One 14 KB activation per token crosses the network per step, sent once and split over the 8 ranks.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-method">
+    <h2 id="h-method">Method and limits</h2>
+    <ul class="points">
+      <li>Model: Kimi K3 from its <a href="https://huggingface.co/moonshotai/Kimi-K3">model card</a>: 2.8T total, 104B active, 93 layers (69 KDA + 24 gated MLA), 896 experts with 16 picked per token, 3584-dim latent MoE. Run in FP8 (~2.9 TB), which needs both servers; per GPU about 177 GB of weights and 95 GB left for KV cache.</li>
+      <li>Step time per decode step is the larger of HBM reads (touched experts, attention weights, KV cache and KDA state at 6.4 TB/s) and FP8 compute (4.5 PF at 45%), plus 45 µs per layer, plus the network time left after overlap (70% hidden on the RDMA fabrics, none on TCP).</li>
+      <li>Closed loop: each user sends a prompt, waits for the full answer, then sends the next. Other users' prompt processing is mixed into every step, chunked at 8,192 tokens.</li>
+      <li>Calibration: latency figures for the cross-node paths use the <a href="https://jingchaozhang.github.io/LLM-Inference-Across-NVLink-and-InfiniBand/">NVLink and InfiniBand study</a> on 2 × 8 H100 as the upper bound. That generic vLLM + Ray stack paid about 145 µs per cross-node collective; this model assumes a tuned stack at 20–30 µs.</li>
+      <li>Not on the card, so assumed: 0.3 GB of KDA recurrent state per request. No speculative decoding or MTP. If your engine sends a full pipeline activation from every rank instead of a split one, 1 × 10G degrades several times faster.</li>
+      <li>These are estimates for planning. Measure each fabric with the same concurrency sweep before you size a deployment; 8 × CX-8 against 2 × BF-3 at 512–1,024 users with 8k+ prompts is the comparison that most needs a real run.</li>
+    </ul>
+  </section>
+
+  <footer class="foot">
+    <p>Open Inference Fabric · modelled with a first-order step-time model; inputs and formulas are listed under Method and limits.</p>
+  </footer>
+</div>
+
+<script>
+const D = {"concurrency":[1,2,4,8,16,32,64,128,256,512,1024],"workloads":{"2k":{"EP16":{"max_concurrency":2374,"8xCX-8":[{"tpot_ms":9.9,"tput":101,"ttft_ms":38},{"tpot_ms":12.5,"tput":160,"ttft_ms":40},{"tpot_ms":17.0,"tput":235,"ttft_ms":42},{"tpot_ms":23.6,"tput":339,"ttft_ms":45},{"tpot_ms":30.6,"tput":523,"ttft_ms":49},{"tpot_ms":32.3,"tput":990,"ttft_ms":50},{"tpot_ms":33.5,"tput":1911,"ttft_ms":51},{"tpot_ms":34.1,"tput":3752,"ttft_ms":52},{"tpot_ms":35.3,"tput":7252,"ttft_ms":53},{"tpot_ms":37.7,"tput":13588,"ttft_ms":57},{"tpot_ms":42.4,"tput":24132,"ttft_ms":64}],"2xBF-3":[{"tpot_ms":11.4,"tput":88,"ttft_ms":43},{"tpot_ms":14.0,"tput":143,"ttft_ms":44},{"tpot_ms":18.5,"tput":216,"ttft_ms":46},{"tpot_ms":25.2,"tput":318,"ttft_ms":50},{"tpot_ms":32.3,"tput":495,"ttft_ms":53},{"tpot_ms":32.9,"tput":972,"ttft_ms":54},{"tpot_ms":34.2,"tput":1870,"ttft_ms":55},{"tpot_ms":35.1,"tput":3642,"ttft_ms":56},{"tpot_ms":36.9,"tput":6933,"ttft_ms":59},{"tpot_ms":40.5,"tput":12645,"ttft_ms":64},{"tpot_ms":47.6,"tput":21505,"ttft_ms":75}],"8x10G":[{"tpot_ms":43.6,"tput":23,"ttft_ms":1261},{"tpot_ms":47.9,"tput":42,"ttft_ms":1265},{"tpot_ms":55.8,"tput":72,"ttft_ms":1273},{"tpot_ms":69.2,"tput":116,"ttft_ms":1286},{"tpot_ms":90.0,"tput":178,"ttft_ms":1310},{"tpot_ms":121.7,"tput":263,"ttft_ms":1354},{"tpot_ms":177.7,"tput":360,"ttft_ms":1437},{"tpot_ms":288.0,"tput":444,"ttft_ms":1602},{"tpot_ms":508.5,"tput":503,"ttft_ms":1933},{"tpot_ms":949.6,"tput":539,"ttft_ms":2595},{"tpot_ms":1831.7,"tput":559,"ttft_ms":3918}],"1x10G":[{"tpot_ms":65.0,"tput":15,"ttft_ms":7570},{"tpot_ms":78.6,"tput":25,"ttft_ms":7588},{"tpot_ms":104.9,"tput":38,"ttft_ms":7623},{"tpot_ms":155.1,"tput":52,"ttft_ms":7692},{"tpot_ms":249.4,"tput":64,"ttft_ms":7826},{"tpot_ms":428.2,"tput":75,"ttft_ms":8090},{"tpot_ms":778.5,"tput":82,"ttft_ms":8615},{"tpot_ms":1477.2,"tput":87,"ttft_ms":9663},{"tpot_ms":2874.7,"tput":89,"ttft_ms":11759},{"tpot_ms":5669.6,"tput":90,"ttft_ms":15952},{"tpot_ms":11259.5,"tput":91,"ttft_ms":24337}]},"PP2":{"max_concurrency":2375,"8xCX-8":[{"tpot_ms":8.7,"tput":115,"ttft_ms":64},{"tpot_ms":10.5,"tput":190,"ttft_ms":65},{"tpot_ms":15.6,"tput":256,"ttft_ms":68},{"tpot_ms":24.3,"tput":329,"ttft_ms":72},{"tpot_ms":36.9,"tput":434,"ttft_ms":79},{"tpot_ms":50.5,"tput":634,"ttft_ms":86},{"tpot_ms":58.8,"tput":1089,"ttft_ms":90},{"tpot_ms":61.0,"tput":2098,"ttft_ms":92},{"tpot_ms":62.2,"tput":4118,"ttft_ms":93},{"tpot_ms":64.4,"tput":7951,"ttft_ms":97},{"tpot_ms":68.8,"tput":14874,"ttft_ms":103}],"2xBF-3":[{"tpot_ms":8.7,"tput":115,"ttft_ms":65},{"tpot_ms":10.5,"tput":190,"ttft_ms":66},{"tpot_ms":15.6,"tput":256,"ttft_ms":69},{"tpot_ms":24.3,"tput":329,"ttft_ms":73},{"tpot_ms":36.9,"tput":433,"ttft_ms":79},{"tpot_ms":50.5,"tput":634,"ttft_ms":86},{"tpot_ms":58.8,"tput":1088,"ttft_ms":91},{"tpot_ms":61.1,"tput":2096,"ttft_ms":92},{"tpot_ms":62.3,"tput":4109,"ttft_ms":94},{"tpot_ms":64.6,"tput":7922,"ttft_ms":98},{"tpot_ms":69.3,"tput":14775,"ttft_ms":105}],"8x10G":[{"tpot_ms":8.8,"tput":113,"ttft_ms":73},{"tpot_ms":10.6,"tput":188,"ttft_ms":74},{"tpot_ms":15.7,"tput":254,"ttft_ms":76},{"tpot_ms":24.4,"tput":328,"ttft_ms":81},{"tpot_ms":37.1,"tput":431,"ttft_ms":87},{"tpot_ms":50.8,"tput":631,"ttft_ms":94},{"tpot_ms":59.3,"tput":1080,"ttft_ms":99},{"tpot_ms":61.9,"tput":2068,"ttft_ms":101},{"tpot_ms":63.8,"tput":4011,"ttft_ms":104},{"tpot_ms":67.6,"tput":7573,"ttft_ms":110},{"tpot_ms":75.2,"tput":13623,"ttft_ms":121}],"1x10G":[{"tpot_ms":8.9,"tput":112,"ttft_ms":118},{"tpot_ms":10.7,"tput":186,"ttft_ms":119},{"tpot_ms":15.9,"tput":251,"ttft_ms":122},{"tpot_ms":24.7,"tput":324,"ttft_ms":126},{"tpot_ms":37.7,"tput":425,"ttft_ms":133},{"tpot_ms":51.8,"tput":617,"ttft_ms":141},{"tpot_ms":61.4,"tput":1042,"ttft_ms":147},{"tpot_ms":66.1,"tput":1935,"ttft_ms":153},{"tpot_ms":72.3,"tput":3541,"ttft_ms":162},{"tpot_ms":84.5,"tput":6058,"ttft_ms":180},{"tpot_ms":109.0,"tput":9399,"ttft_ms":217}]}},"32k":{"EP16":{"max_concurrency":376,"8xCX-8":[{"tpot_ms":9.9,"tput":101,"ttft_ms":268},{"tpot_ms":27.8,"tput":72,"ttft_ms":278},{"tpot_ms":32.4,"tput":123,"ttft_ms":282},{"tpot_ms":33.3,"tput":240,"ttft_ms":287},{"tpot_ms":33.7,"tput":475,"ttft_ms":295},{"tpot_ms":34.5,"tput":928,"ttft_ms":311},{"tpot_ms":36.1,"tput":1775,"ttft_ms":342},{"tpot_ms":39.2,"tput":3265,"ttft_ms":406},{"tpot_ms":67.3,"tput":3806,"ttft_ms":545},null,null],"2xBF-3":[{"tpot_ms":11.4,"tput":88,"ttft_ms":321},{"tpot_ms":29.5,"tput":68,"ttft_ms":331},{"tpot_ms":33.0,"tput":121,"ttft_ms":336},{"tpot_ms":34.1,"tput":235,"ttft_ms":341},{"tpot_ms":34.9,"tput":458,"ttft_ms":351},{"tpot_ms":36.5,"tput":876,"ttft_ms":370},{"tpot_ms":39.7,"tput":1612,"ttft_ms":410},{"tpot_ms":46.1,"tput":2776,"ttft_ms":488},{"tpot_ms":80.7,"tput":3172,"ttft_ms":656},null,null],"8x10G":[{"tpot_ms":43.6,"tput":23,"ttft_ms":19147},{"tpot_ms":80.3,"tput":25,"ttft_ms":19242},{"tpot_ms":125.2,"tput":32,"ttft_ms":19417},{"tpot_ms":201.5,"tput":40,"ttft_ms":19761},{"tpot_ms":352.7,"tput":45,"ttft_ms":20448},{"tpot_ms":655.1,"tput":49,"ttft_ms":21821},{"tpot_ms":1259.9,"tput":51,"ttft_ms":24567},{"tpot_ms":2469.4,"tput":52,"ttft_ms":30059},{"tpot_ms":4910.2,"tput":52,"ttft_ms":41055},null,null],"1x10G":[{"tpot_ms":65.1,"tput":15,"ttft_ms":119676},{"tpot_ms":202.9,"tput":10,"ttft_ms":120226},{"tpot_ms":450.1,"tput":9,"ttft_ms":121311},{"tpot_ms":931.0,"tput":9,"ttft_ms":123475},{"tpot_ms":1891.3,"tput":8,"ttft_ms":127803},{"tpot_ms":3812.0,"tput":8,"ttft_ms":136458},{"tpot_ms":7653.3,"tput":8,"ttft_ms":153769},{"tpot_ms":15336.0,"tput":8,"ttft_ms":188391},{"tpot_ms":30723.1,"tput":8,"ttft_ms":257645},null,null]},"PP2":{"max_concurrency":376,"8xCX-8":[{"tpot_ms":8.8,"tput":114,"ttft_ms":313},{"tpot_ms":31.2,"tput":64,"ttft_ms":325},{"tpot_ms":51.4,"tput":78,"ttft_ms":336},{"tpot_ms":59.5,"tput":135,"ttft_ms":343},{"tpot_ms":60.6,"tput":264,"ttft_ms":348},{"tpot_ms":61.3,"tput":522,"ttft_ms":358},{"tpot_ms":62.7,"tput":1021,"ttft_ms":377},{"tpot_ms":65.4,"tput":1958,"ttft_ms":417},{"tpot_ms":70.8,"tput":3614,"ttft_ms":495},null,null],"2xBF-3":[{"tpot_ms":8.8,"tput":114,"ttft_ms":319},{"tpot_ms":31.3,"tput":64,"ttft_ms":331},{"tpot_ms":51.4,"tput":78,"ttft_ms":342},{"tpot_ms":59.5,"tput":134,"ttft_ms":349},{"tpot_ms":60.7,"tput":264,"ttft_ms":354},{"tpot_ms":61.5,"tput":521,"ttft_ms":364},{"tpot_ms":63.0,"tput":1016,"ttft_ms":384},{"tpot_ms":66.0,"tput":1939,"ttft_ms":424},{"tpot_ms":72.1,"tput":3552,"ttft_ms":505},null,null],"8x10G":[{"tpot_ms":8.9,"tput":112,"ttft_ms":396},{"tpot_ms":31.4,"tput":64,"ttft_ms":408},{"tpot_ms":51.7,"tput":77,"ttft_ms":420},{"tpot_ms":60.0,"tput":133,"ttft_ms":427},{"tpot_ms":61.7,"tput":259,"ttft_ms":434},{"tpot_ms":63.5,"tput":504,"ttft_ms":447},{"tpot_ms":67.0,"tput":955,"ttft_ms":473},{"tpot_ms":74.0,"tput":1730,"ttft_ms":525},{"tpot_ms":88.0,"tput":2910,"ttft_ms":629},null,null],"1x10G":[{"tpot_ms":9.0,"tput":111,"ttft_ms":847},{"tpot_ms":31.8,"tput":63,"ttft_ms":860},{"tpot_ms":52.8,"tput":76,"ttft_ms":874},{"tpot_ms":62.7,"tput":128,"ttft_ms":885},{"tpot_ms":67.2,"tput":238,"ttft_ms":901},{"tpot_ms":74.8,"tput":428,"ttft_ms":931},{"tpot_ms":89.9,"tput":712,"ttft_ms":992},{"tpot_ms":120.1,"tput":1066,"ttft_ms":1114},{"tpot_ms":180.5,"tput":1418,"ttft_ms":1357},null,null]}}}};
+const FABS = ["8xCX-8", "2xBF-3", "8x10G", "1x10G"];
+const NAME = {"8xCX-8": "8 × CX-8 800G", "2xBF-3": "2 × BF-3 400G", "8x10G": "8 × 10G", "1x10G": "1 × 10G"};
+const SHORT = {"8xCX-8": "8 × CX-8", "2xBF-3": "2 × BF-3", "8x10G": "8 × 10G", "1x10G": "1 × 10G"};
+const BEST = {"8xCX-8": "EP16", "2xBF-3": "EP16", "8x10G": "PP2", "1x10G": "PP2"};
+const VAR = {"8xCX-8": "--s1", "2xBF-3": "--s2", "8x10G": "--s3", "1x10G": "--s4"};
+const SHAPE = {"8xCX-8": "circle", "2xBF-3": "square", "8x10G": "triangle", "1x10G": "diamond"};
+const CS = D.concurrency;
+const state = { wl: "2k", lay: "best" };
+
+const layoutOf = f => state.lay === "best" ? BEST[f] : state.lay;
+const rowsOf = (f, wl = state.wl, lay = layoutOf(f)) => D.workloads[wl][lay][f];
+const col = f => getComputedStyle(document.documentElement).getPropertyValue(VAR[f]).trim();
+
+function fmtT(v) { return v >= 10000 ? (v / 1000).toFixed(1) + "k" : v.toLocaleString("en-US"); }
+function fmtMs(v) { return v >= 1000 ? (v / 1000).toFixed(v >= 10000 ? 0 : 1) + " s" : (v < 100 ? v.toFixed(v < 10 ? 1 : 0) : Math.round(v)) + " ms"; }
+function pct(a, b) { const p = Math.round((a / b - 1) * 100); return (p > 0 ? "+" : "") + p + "%"; }
+
+function swatchSVG(f, size = 12) {
+  const c = col(f), h = size / 2;
+  return `<svg class="sw" viewBox="0 0 18 12" aria-hidden="true"><line x1="0" y1="6" x2="18" y2="6" stroke="${c}" stroke-width="2"/>${marker(f, 9, 6, 4, c)}</svg>`;
+}
+function marker(f, x, y, r, c, ring) {
+  const st = ring ? ` stroke="var(--surface)" stroke-width="2"` : "";
+  switch (SHAPE[f]) {
+    case "square": return `<rect x="${x - r}" y="${y - r}" width="${2 * r}" height="${2 * r}" rx="1" fill="${c}"${st}/>`;
+    case "triangle": return `<path d="M${x} ${y - r - 1}L${x + r + 1} ${y + r}L${x - r - 1} ${y + r}Z" fill="${c}"${st}/>`;
+    case "diamond": return `<path d="M${x} ${y - r - 1}L${x + r + 1} ${y}L${x} ${y + r + 1}L${x - r - 1} ${y}Z" fill="${c}"${st}/>`;
+    default: return `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"${st}/>`;
+  }
+}
+
+function renderDeltas() {
+  const base = rowsOf("8xCX-8", "2k", "EP16")[10];
+  document.getElementById("deltas").innerHTML = FABS.map(f => {
+    const r = rowsOf(f, "2k", BEST[f])[10];
+    const first = f === "8xCX-8";
+    const big = first ? `${fmtT(r.tput)} tok/s` : `${pct(r.tput, base.tput)} throughput`;
+    const sm = first ? `${fmtMs(r.tpot_ms)} per token · ${fmtMs(r.ttft_ms)} to first token` : `${pct(r.tpot_ms, base.tpot_ms)} time per token (${fmtMs(r.tpot_ms)})`;
+    return `<div class="delta"><span class="lab">${swatchSVG(f)}${NAME[f]} <span class="pill">${BEST[f]}</span></span><span class="big">${big}</span><span class="sm">${sm}</span></div>`;
+  }).join("");
+}
+
+function renderLegend() {
+  document.getElementById("legend").innerHTML = FABS.map(f =>
+    `<span class="item">${swatchSVG(f)}${NAME[f]}<span class="chip">${layoutOf(f)}</span></span>`).join("");
+}
+
+function niceMax(v) { const p = Math.pow(10, Math.floor(Math.log10(v))); for (const m of [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) if (m * p >= v) return m * p; return 10 * p; }
+
+function drawChart(id, key, opt) {
+  const host = document.getElementById(id);
+  const W = Math.max(280, host.clientWidth), narrow = W < 560;
+  const H = narrow ? 240 : 290, m = { l: 56, r: narrow ? 14 : 92, t: 14, b: 42 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const series = FABS.map(f => ({ f, rows: rowsOf(f) }));
+  const vals = series.flatMap(s => s.rows.filter(Boolean).map(r => r[key]));
+  const x = i => m.l + i * iw / (CS.length - 1);
+  let y, ticks;
+  if (opt.log) {
+    const lo = Math.pow(10, Math.floor(Math.log10(Math.min(...vals)))), hi = Math.pow(10, Math.ceil(Math.log10(Math.max(...vals))));
+    const L = Math.log10(lo), R = Math.log10(hi);
+    y = v => m.t + ih - (Math.log10(v) - L) / (R - L) * ih;
+    ticks = [];
+    for (let e = L; e <= R; e++) for (const k of (R - L > 3 || narrow ? [1] : [1, 2, 5])) { const t = k * Math.pow(10, e); if (t >= lo && t <= hi) ticks.push(t); }
+  } else {
+    const hi = niceMax(Math.max(...vals));
+    y = v => m.t + ih - v / hi * ih;
+    ticks = [0, .25, .5, .75, 1].map(k => k * hi);
+  }
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" tabindex="0" aria-label="${opt.title} against concurrency. Use left and right arrow keys to read values.">`;
+  for (const t of ticks) s += `<line x1="${m.l}" x2="${m.l + iw}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)" stroke-width="1"/><text x="${m.l - 8}" y="${y(t) + 4}" text-anchor="end">${opt.fmt(t)}</text>`;
+  s += `<line x1="${m.l}" x2="${m.l + iw}" y1="${m.t + ih}" y2="${m.t + ih}" stroke="var(--axis)" stroke-width="1"/>`;
+  CS.forEach((c, i) => { if (!narrow || i % 2 === 0 || i === CS.length - 1) s += `<text x="${x(i)}" y="${m.t + ih + 18}" text-anchor="middle">${c >= 1000 ? (c / 1000).toFixed(c % 1000 ? 1 : 0) + "k" : c}</text>`; });
+  s += `<text class="note" x="${m.l + iw / 2}" y="${H - 4}" text-anchor="middle">Concurrent users</text>`;
+  const cap = Math.max(...FABS.map(f => D.workloads[state.wl][layoutOf(f)].max_concurrency));
+  if (cap < CS[CS.length - 1]) {
+    const xc = x(Math.log2(cap));
+    s += `<line x1="${xc}" x2="${xc}" y1="${m.t}" y2="${m.t + ih}" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="3 4"/><text class="note" x="${xc - 6}" y="${m.t + 12}" text-anchor="end">KV cache full at ~${cap} users</text>`;
+  }
+  const ends = [];
+  for (const { f, rows } of series) {
+    const c = col(f), pts = rows.map((r, i) => r ? [x(i), y(r[key])] : null).filter(Boolean);
+    s += `<path d="${pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join("")}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>`;
+    for (const p of pts) s += marker(f, p[0], p[1], 4, c, true);
+    const last = pts[pts.length - 1];
+    ends.push({ f, x: last[0], y: last[1] });
+  }
+  if (!narrow) {
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
+    for (const e of ends) s += `<text class="dl" x="${e.x + 10}" y="${e.y + 4}">${SHORT[e.f]}</text>`;
+  }
+  s += `<line id="${id}-x" x1="0" x2="0" y1="${m.t}" y2="${m.t + ih}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/>`;
+  s += `<rect x="${m.l - 10}" y="${m.t}" width="${iw + 20}" height="${ih}" fill="transparent" id="${id}-hit"/></svg><div class="tip" id="${id}-tip" hidden></div>`;
+  host.innerHTML = s;
+
+  const svg = host.querySelector("svg"), cross = host.querySelector(`#${CSS.escape(id)}-x`), tip = host.querySelector(".tip");
+  let cur = -1;
+  function show(i) {
+    cur = i;
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
+    tip.innerHTML = `<b>${CS[i].toLocaleString("en-US")} concurrent ${CS[i] === 1 ? "user" : "users"}</b>` + FABS.map(f => {
+      const r = rowsOf(f)[i];
+      return `<div class="r"><span>${swatchSVG(f)}${SHORT[f]}</span><span>${r ? opt.fmt(r[key]) : "over KV limit"}</span></div>`;
+    }).join("");
+    tip.hidden = false;
+    const tw = tip.offsetWidth, left = x(i) + 14 + tw > W ? x(i) - 14 - tw : x(i) + 14;
+    tip.style.left = Math.max(0, left) + "px"; tip.style.top = m.t + "px";
+  }
+  function hide() { cross.setAttribute("visibility", "hidden"); tip.hidden = true; cur = -1; }
+  svg.addEventListener("pointermove", e => {
+    const b = svg.getBoundingClientRect(), px = e.clientX - b.left;
+    if (px < m.l - 10 || px > m.l + iw + 10) return hide();
+    show(Math.max(0, Math.min(CS.length - 1, Math.round((px - m.l) / (iw / (CS.length - 1))))));
+  });
+  svg.addEventListener("pointerleave", hide);
+  svg.addEventListener("blur", hide);
+  svg.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") { show(Math.min(CS.length - 1, cur + 1)); e.preventDefault(); }
+    else if (e.key === "ArrowLeft") { show(Math.max(0, cur < 0 ? 0 : cur - 1)); e.preventDefault(); }
+    else if (e.key === "Escape") hide();
+  });
+}
+
+function renderTable() {
+  let h = `<table><thead><tr><th>Users</th>${FABS.map(f => `<th>${SHORT[f]} · ${layoutOf(f)}</th>`).join("")}</tr></thead><tbody>`;
+  CS.forEach((c, i) => {
+    h += `<tr><td>${c.toLocaleString("en-US")}</td>` + FABS.map(f => {
+      const r = rowsOf(f)[i];
+      return r ? `<td>${fmtT(r.tput)} tok/s<span class="sub">${fmtMs(r.tpot_ms)} / token · ${fmtMs(r.ttft_ms)} TTFT</span></td>` : `<td><span class="sub">over KV limit</span></td>`;
+    }).join("") + `</tr>`;
+  });
+  document.getElementById("datatable").innerHTML = h + `</tbody></table>`;
+}
+
+function renderSLO() {
+  const targets = [50, 70, 100];
+  let h = `<table><thead><tr><th>Fabric</th><th>Layout</th>${targets.map(t => `<th>≤ ${t} ms per token</th>`).join("")}</tr></thead><tbody>`;
+  for (const f of FABS) {
+    const rows = rowsOf(f), lastIdx = rows.reduce((a, r, i) => r ? i : a, -1);
+    h += `<tr><td>${NAME[f]}</td><td>${layoutOf(f)}</td>` + targets.map(t => {
+      let best = -1; rows.forEach((r, i) => { if (r && r.tpot_ms <= t) best = i; });
+      if (best < 0) return `<td><span class="pill bad">none</span></td>`;
+      const atEnd = best === lastIdx;
+      const label = atEnd ? (lastIdx === CS.length - 1 ? `≥ ${CS[best].toLocaleString("en-US")}` : `${CS[best]} (KV limit)`) : CS[best].toLocaleString("en-US");
+      return `<td>${label} users<span class="sub">${fmtT(rows[best].tput)} tok/s</span></td>`;
+    }).join("") + `</tr>`;
+  }
+  document.getElementById("slotable").innerHTML = h + `</tbody></table>`;
+}
+
+function renderAll() {
+  renderLegend();
+  drawChart("c-tput", "tput", { title: "Total output throughput", fmt: v => v === 0 ? "0" : fmtT(Math.round(v)) });
+  drawChart("c-tpot", "tpot_ms", { title: "Time per output token", log: true, fmt: fmtMs });
+  drawChart("c-ttft", "ttft_ms", { title: "Time to first token", log: true, fmt: fmtMs });
+  renderTable(); renderSLO();
+}
+
+document.querySelectorAll("[data-wl]").forEach(b => b.addEventListener("click", () => {
+  state.wl = b.dataset.wl; document.querySelectorAll("[data-wl]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderAll();
+}));
+document.querySelectorAll("[data-lay]").forEach(b => b.addEventListener("click", () => {
+  state.lay = b.dataset.lay; document.querySelectorAll("[data-lay]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderAll();
+}));
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(renderAll, 120); });
+const mq = window.matchMedia("(prefers-color-scheme: dark)"); mq.addEventListener && mq.addEventListener("change", () => { renderDeltas(); renderAll(); });
+new MutationObserver(() => { renderDeltas(); renderAll(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+renderDeltas(); renderAll();
+</script>
