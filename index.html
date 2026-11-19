@@ -44,19 +44,19 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
 </header>
 
 <section class="list" aria-label="Benchmarks">
-  <a class="card" href="w7900-dynamo-vs-vllm/">
-    <span class="eyebrow">November 2026</span>
+  <a class="card" href="https://openinferencefabric.us.ci/benchmarks/w7900-dynamo-vs-vllm/">
+    <span class="eyebrow">November 2026 · now on Open Inference Fabric</span>
     <h2>Dynamo vs plain vLLM on the Radeon PRO W7900</h2>
     <p class="muted">NVIDIA Dynamo, built for AMD GPUs by Open Inference Fabric, against vLLM's own server on the same vLLM 0.33.0 ROCm engine. Qwen3-0.6B and Qwen3-8B, chat and decode workloads, 1 to 32 users: the same throughput and time per token, and up to 40% lower time to first token, with the reason traced in the code.</p>
     <div class="tags"><span class="tag">Radeon PRO W7900</span><span class="tag">NVIDIA Dynamo</span><span class="tag">vLLM</span><span class="tag">ROCm</span><span class="tag">AIPerf</span></div>
-    <span class="go">Open report →</span>
+    <span class="go">Open report on openinferencefabric.us.ci →</span>
   </a>
-  <a class="card" href="amd-fraction-dmem-cap/">
-    <span class="eyebrow">November 2026</span>
+  <a class="card" href="https://openinferencefabric.us.ci/benchmarks/amd-fraction-dmem-cap/">
+    <span class="eyebrow">November 2026 · now on Open Inference Fabric</span>
     <h2>AMD GPU fractions in KAI: a hard memory cap at no performance cost</h2>
     <p class="muted">Open Inference Fabric's AMD backend for KAI gpu-fractioning caps each fractional pod's GPU memory with the Linux dmem cgroup. vLLM with Qwen3-0.6B on a Radeon PRO W7900, against NVIDIA's gpu-fractioning on an RTX A6000: whole GPU, one capped half, two halves sharing, and an over-ask the kernel refuses.</p>
     <div class="tags"><span class="tag">Radeon PRO W7900</span><span class="tag">RTX A6000</span><span class="tag">KAI Scheduler</span><span class="tag">GPU fractions</span><span class="tag">dmem cgroup</span><span class="tag">vLLM</span></div>
-    <span class="go">Open report →</span>
+    <span class="go">Open report on openinferencefabric.us.ci →</span>
   </a>
   <a class="card" href="nemotron-a6000-vs-w7900/">
     <span class="eyebrow">October 2026</span>
@@ -67,7 +67,7 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
   </a>
 </section>
 
-<footer>More benchmarks will be added here.</footer>
+<footer>Open Inference Fabric benchmarks are published at <a href="https://openinferencefabric.us.ci/benchmarks/">openinferencefabric.us.ci/benchmarks</a>.</footer>
 </div>
 </body>
 </html>
